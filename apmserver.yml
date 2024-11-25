@@ -1,0 +1,36 @@
+
+apiVersion: apm.k8s.elastic.co/v1
+kind: ApmServer
+metadata:
+  name: apm-server-quickstart
+  namespace: eck
+spec:
+  # http:
+  #   tls:
+  #     selfSignedCertificate:
+  #       disabled: true
+  version: 8.15.0 #8.13.4
+  count: 1
+  elasticsearchRef:
+    name: quickstart
+  kibanaRef: 
+    name: quickstart
+  # secureSettings:
+  # - secretName: apm-secret-settings
+  config:
+    apm-server:
+      # host: "localhost:8200"
+      rum:
+        enabled: true
+        allow_origins: ['*'] #['localhost:8080', 'localhost:3000', 'https://localhost:8200', 'cardatabase-service:8080'] ## without allow_origins set to ['*'], frontend could not connect to apm server
+        allow_headers: ['Authorization']
+        source_mapping:
+          enabled: true
+    output:
+      elasticsearch:
+        hosts: ["quickstart-es-http.eck.svc:9200"]
+        username: elastic
+        password: "0by0g96zH26FteKJc4V1k7s4" #change it with your elastic password
+        protocol: "https"
+        ssl.verification_mode: "none"
+  

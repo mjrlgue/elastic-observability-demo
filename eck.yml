@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: eck
+---
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: quickstart
+  namespace: eck
+spec:
+  version: 8.15.0 #8.13.4
+  nodeSets:
+  - name: default
+    count: 1
+    config:
+      node.store.allow_mmap: false
+---
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: quickstart
+  namespace: eck
+spec:
+  version: 8.15.0 #8.13.4
+  count: 1
+  # secureSettings:
+  # - secretName: kibana-secret-settings
+  elasticsearchRef:
+    name: quickstart
+  config:
+      server.maxPayload: 204857600
+      csp.strict: false
+      xpack.fleet.packages:
+      - name: apm
+        version: latest

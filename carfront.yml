@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: carapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carfront-deployment
+  namespace: carapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: carfront
+  template:
+    metadata:
+      labels:
+        app: carfront
+    spec:
+      containers:
+      - name: carfront
+        image: mchahoud/carfront:latest ##change it with your url
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carfront-service
+  namespace: carapp
+spec:
+  selector:
+    app: carfront
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  type: ClusterIP

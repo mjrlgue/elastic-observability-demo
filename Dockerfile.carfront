@@ -1,0 +1,22 @@
+FROM node:16
+# set working direction
+WORKDIR /app
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+# install application dependencies
+COPY package.json ./
+COPY package-lock.json ./
+# RUN npm i
+RUN npm ci
+# add app
+COPY . ./
+# generate static js
+RUN npm run build
+# install serve, use node:10.6.0 to install server
+RUN npm install -g serve #use node
+# start app
+# CMD ["npm", "start"]
+# you can use CMD serve -s --port 8081 build to change default 5000 port
+#CMD serve -s build
+CMD ["serve", "-s", "build", "--listen", "5000"]
+EXPOSE 5000
